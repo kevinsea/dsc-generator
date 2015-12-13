@@ -55,10 +55,13 @@ namespace DesiredState.Common
 			sb.AppendLine(  "}\n");
 
 			sb.AppendLine(  "cls\n");
-			sb.AppendLine(  "# The generated text should be placed in .ps1 file and placed in a folder by itself (all .mof's in a folder are executed)\n");
-			sb.AppendLine(  "IIS_DSC -OutputPath \"c:\\my_iis_dsc_dir\" # this will compile the file down to an .MOF\n");
-			sb.AppendLine(  "Start-DscConfiguration -Path \"c:\\my_iis_dsc_dir\" -Wait -Debug -ErrorAction Stop -Force -Verbose  # this will apply the DSC");
 
+			sb.AppendLine(  "Compile this DSC down to an .MOF:  An .mof file will be placed in the specified directory.");
+			sb.AppendLine(  "IIS_DSC -OutputPath \"c:\\my_iis_dsc_dir\"\n");
+
+			sb.AppendLine(  "# Apply the DSC.  ALL .mof's in a folder will be executed!");
+			sb.AppendLine(  "Start-DscConfiguration -Path \"c:\\my_iis_dsc_dir\" -Wait -Debug -ErrorAction Stop -Force -Verbose  # this will apply the DSC");
+			
 			return sb.ToString();
 		}
 
