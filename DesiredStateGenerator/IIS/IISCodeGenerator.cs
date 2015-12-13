@@ -22,8 +22,8 @@ namespace DesiredState.IIS
 			string baseIndent = CodeGenHelpers.GetIndentString(2);
 			string code;
 
-			sb.AppendLine(baseIndent + "# Note this code does not detect server level IIS overides.");
-			sb.AppendLine(baseIndent + "# See documentation for information about detecting server level changes.\n");
+			sb.AppendLine(baseIndent + "# Note this code does not detect server level IIS overrides.");
+			sb.AppendLine(baseIndent + "# See the wiki for information about detecting server level changes.\n");
 
 			if (options.IisPoolAndSitesGenerationMode == IisPoolAndSitesGenerationMode.ConfigFileOrder)
 			{
@@ -52,8 +52,9 @@ namespace DesiredState.IIS
 			sb.AppendLine(indent + "# Information about where to get needed modules and required version information can ");
 			sb.AppendLine(indent + "# be found here: https://github.com/kevinsea/dsc-generator/wiki/Powershell-Modules");
 			sb.AppendLine(indent + "# ---------------------------------------------------------------------------------");
-			sb.AppendLine(indent + "Import-DscResource -ModuleName xWebAdministration");
-			sb.AppendLine(indent + "Import-DscResource -ModuleName cWebAdministration  # Needs special a version at this time, see link above");
+			sb.AppendLine("");
+			sb.AppendLine(indent + "Import-DscResource -ModuleName xWebAdministration  # Needed for xWebVirtualDirectory & xWebApplication");
+			sb.AppendLine(indent + "Import-DscResource -ModuleName cWebAdministration  # Needed for cAppPool and cWebSite");
 
 			return sb.ToString();
 		}
