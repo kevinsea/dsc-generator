@@ -22,8 +22,8 @@ namespace DesiredState.IIS
 			string baseIndent = CodeGenHelpers.GetIndentString(2);
 			string code;
 
-			sb.AppendLine(baseIndent + "# Note this code does not detect server level IIS overrides.");
-			sb.AppendLine(baseIndent + "# See the wiki for information about detecting server level changes.\n");
+			sb.AppendLine(baseIndent + "# Note this code does not detect server level IIS overrides (it assumes the IIS level settings");
+			sb.AppendLine(baseIndent + "# have not been overriden).  See the wiki for information about detecting server level changes.\n");
 
 			if (options.IisPoolAndSitesGenerationMode == IisPoolAndSitesGenerationMode.ConfigFileOrder)
 			{
@@ -90,7 +90,7 @@ namespace DesiredState.IIS
 			return sb.ToString();
 		}
 
-		private static string GetSiteHeader(SiteDesiredState site)
+		private string GetSiteHeader(SiteDesiredState site)
 		{
 			StringBuilder sb = new StringBuilder();
 

@@ -4,7 +4,6 @@ using System.Reflection;
 using System.Text;
 using DesiredState.IIS;
 using DesiredState.Windows;
-using Microsoft.Web.Administration;
 
 namespace DesiredState.Common
 {
@@ -56,10 +55,10 @@ namespace DesiredState.Common
 
 			sb.AppendLine(  "cls\n");
 
-			sb.AppendLine(  "Compile this DSC down to an .MOF:  An .mof file will be placed in the specified directory.");
+			sb.AppendLine(  "# Compile this DSC down to an .MOF:  An .mof file will be placed in the specified directory:");
 			sb.AppendLine(  "IIS_DSC -OutputPath \"c:\\my_iis_dsc_dir\"\n");
 
-			sb.AppendLine(  "# Apply the DSC.  ALL .mof's in a folder will be executed!");
+			sb.AppendLine(  "# Apply the DSC.  ALL .mof's in a folder will be executed!:");
 			sb.AppendLine(  "Start-DscConfiguration -Path \"c:\\my_iis_dsc_dir\" -Wait -Debug -ErrorAction Stop -Force -Verbose  # this will apply the DSC");
 			
 			return sb.ToString();
