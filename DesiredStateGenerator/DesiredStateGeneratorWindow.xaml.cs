@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -44,6 +45,7 @@ namespace DesiredState
 			}
 			catch (Exception ex)
 			{
+				Trace.TraceError(ex.ToString());
 				MessageBox.Show(ex.Message);
 			}
 			finally
