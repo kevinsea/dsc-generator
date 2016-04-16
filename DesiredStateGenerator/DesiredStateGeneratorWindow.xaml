@@ -8,7 +8,7 @@
         <CheckBox x:Name="GenerateIISSitesPoolsCtl" Content="Generate IIS Sites and Pools" HorizontalAlignment="Left" Margin="10,10,0,0" VerticalAlignment="Top" Width="229" IsChecked="True"/>
 
         <Label Content="Organize DSC:" HorizontalAlignment="Left" Margin="26,31,0,0" VerticalAlignment="Top" Width="114"/>
-        <StackPanel Margin="32,57,0,673.4" HorizontalAlignment="Left" Width="158">
+        <StackPanel Margin="32,57,0,0" HorizontalAlignment="Left" Width="158" VerticalAlignment="Top">
             <RadioButton x:Name="GenerateIisSitesPoolsSortedCtl" Content="Group By Site"  VerticalAlignment="Top" IsChecked="True" Margin="0,0,10,0"/>
             <RadioButton x:Name="GenerateIisSitesPoolsCtlComparable" Content="Pools, then Sites" VerticalAlignment="Top" Margin="0,0,4,0"/>
         </StackPanel>
