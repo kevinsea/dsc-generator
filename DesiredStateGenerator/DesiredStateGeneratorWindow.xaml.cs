@@ -37,14 +37,21 @@ namespace DesiredState
 				CodeGenerator sm = new CodeGenerator();
 
 				ResultsCtl.Text = sm.GenerateConfig(options);
+
 			}
-			catch (UnauthorizedAccessException ex)
+			catch (UnauthorizedAccessException)
 			{
-				MessageBox.Show("Error: you don't have admin rights or UAC is enabled.  Please re-run as admin. (UnauthorizedAccessException)");
+				ShowErrorMessage("Error: you don't have admin rights or UAC is enabled.  Please re-run as an administrator. (UnauthorizedAccessException)");
 			}
+
+			catch (System.IO.DirectoryNotFoundException ex)
+			{
+				ShowErrorMessage("Is IIS installed?\n\n A DirectoryNotFoundException occurred: " + ex.Message);
+			}
+
 			catch (Exception ex)
 			{
-				MessageBox.Show(ex.Message);
+				ShowErrorMessage(ex.Message + " (" + ex.GetType().Name +")");
 			}
 			finally
 			{
@@ -79,6 +86,11 @@ namespace DesiredState
 				options.IisPoolAndSitesGenerationMode = IISCodeGenerator.IisPoolAndSitesGenerationMode.ConfigFileOrder;
 
 			return options;
+		}
+
+		private void ShowErrorMessage(string errorMsg)
+		{
+			MessageBox.Show(errorMsg, "An Error Occurred.");
 		}
 
 	}

@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 using DesiredState.Common;
-using wmi = System.Management;
 using System.Management.Automation;
 
 namespace DesiredState.Windows
