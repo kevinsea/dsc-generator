@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -37,7 +38,6 @@ namespace DesiredState
 				CodeGenerator sm = new CodeGenerator();
 
 				ResultsCtl.Text = sm.GenerateConfig(options);
-
 			}
 			catch (UnauthorizedAccessException)
 			{
@@ -51,7 +51,7 @@ namespace DesiredState
 
 			catch (Exception ex)
 			{
-				ShowErrorMessage(ex.Message + " (" + ex.GetType().Name +")");
+				ShowErrorMessage(ex.Message + " (" + ex.GetType().Name + ")");
 			}
 			finally
 			{
@@ -71,7 +71,7 @@ namespace DesiredState
 		private IISCodeGenerator.IisPoolAndSitesOptions GetIisOptions()
 		{
 			var options = new IISCodeGenerator.IisPoolAndSitesOptions();
-		
+
 			options.StandardizeAppPoolRecycles = StandardizeAppPoolRecyclesCtl.IsChecked.GetValueOrDefault();
 			options.KeepAppPoolsRunning = KeepAppPoolsRunningCtl.IsChecked.GetValueOrDefault();
 			options.StandardizeLogFileLocation = StandardizeLogFileLocationCtl.IsChecked.GetValueOrDefault();
@@ -90,6 +90,8 @@ namespace DesiredState
 
 		private void ShowErrorMessage(string errorMsg)
 		{
+			Trace.TraceError(errorMsg);
+
 			MessageBox.Show(errorMsg, "An Error Occurred.");
 		}
 
