@@ -24,7 +24,7 @@ namespace DesiredState.IIS
 			AddAttribute("Website", siteName);
 			AddAttribute("PhysicalPath", virtualDirectory.PhysicalPath);
 			AddAttribute("WebApplication", FormatWebApplicationName( webApplicationName));
-			AddAttribute("DependsOn", "[cWebSite]" + SiteDesiredState.GetSiteKey(siteName));
+			AddAttribute("DependsOn", "[xWebSite]" + SiteDesiredState.GetSiteKey(siteName));
 		}
 
 		private static string FormatWebApplicationName(string webApplicationName)

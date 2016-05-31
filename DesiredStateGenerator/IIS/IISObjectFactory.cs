@@ -17,12 +17,13 @@ namespace DesiredState.IIS
 			List<SiteDesiredState> siteCodeList = new List<SiteDesiredState>();
 			WebConfigPropertyDesiredStateAssembler gen = new WebConfigPropertyDesiredStateAssembler();
 
-			List<WebConfigPropertyDesiredState> authDesiredStateList = gen.GetAuthenticationDesiredStates();
+			List<WebConfigPropertyDesiredState> configPropDesiredStateList = gen.GetWebConfigPropertyDesiredStates();
 
 			foreach (var site in serverManager.Sites)
 			{
 				var siteName = site.Name;
-				var siteAuthDesiredStateList = authDesiredStateList.Where(a => CodeGenHelpers.AreEqualCI(a.SiteName, siteName));
+				var siteAuthDesiredStateList = new List<WebConfigPropertyDesiredState>(); // TODO reimplement this for the MS xWeb modules
+					//configPropDesiredStateList.Where(a => CodeGenHelpers.AreEqualCI(a.SiteName, siteName));
 				var siteCode = new SiteDesiredState(site, siteAuthDesiredStateList, iisOptions);
 
 				siteCodeList.Add(siteCode);

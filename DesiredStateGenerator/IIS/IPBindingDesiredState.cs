@@ -33,7 +33,7 @@ namespace DesiredState.IIS
 
 		protected override string DscObjectType
 		{
-			get { return "PSHOrg_cWebBindingInformation"; }
+			get { return "MSFT_xWebBindingInformation"; }
 		}
 
 	}

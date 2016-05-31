@@ -29,7 +29,7 @@ namespace DesiredState.IIS
 			this.ApplicationPool =application.ApplicationPoolName;
 			AddAttribute("WebAppPool", this.ApplicationPool);
 			
-			AddAttribute("DependsOn", "[cAppPool]" + PoolDesiredState.GetPoolVariableName(application.ApplicationPoolName));
+			AddAttribute("DependsOn", "[xWebAppPool]" + PoolDesiredState.GetPoolVariableName(application.ApplicationPoolName));
 
 			this.VirtualDirectories = GetVirtualDirectories(application.VirtualDirectories, siteName, application.Path);
 		}

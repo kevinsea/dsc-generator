@@ -30,15 +30,12 @@ namespace DesiredState.IIS
 
 			this.AddAttributeWithComment("PhysicalPath", rootApp.VirtualDirectories[0].PhysicalPath, "This folder must already exist");
 
-			if (iisOptions.StandardizeLogFileLocation)
-			{
-				this.AddAttributeWithOverrideValue("LogFileDirectory", @"D:\IISLogs", iisSiteObject.LogFile.Directory); 
-			}
-			else
-			{
-				this.AddAttribute("LogFileDirectory", iisSiteObject.LogFile.Directory);
-			}
-			
+			string logAttributeName = "### Not in xWebsite, #132 will add something fancier: LogFileDirectory";
+			//if (iisOptions.StandardizeLogFileLocation)
+			//	this.AddAttributeWithOverrideValue(logAttributeName, @"D:\IISLogs", iisSiteObject.LogFile.Directory);
+			//else
+			this.AddAttribute(logAttributeName, iisSiteObject.LogFile.Directory);
+
 			this.AddAttribute("DependsOn", "[xWebAppPool]" + PoolDesiredState.GetPoolVariableName(this.ApplicationPool));
 
 			this.Bindings = GetBindings(iisSiteObject.Bindings);
@@ -60,7 +57,7 @@ namespace DesiredState.IIS
 
 		protected override string DscObjectType
 		{
-			get { return "cWebSite"; }
+			get { return "xWebSite"; }
 		}
 
 		internal static string GetSiteKey(string siteName)
@@ -108,9 +105,9 @@ namespace DesiredState.IIS
 			foreach (var application in applications)
 			{
 
-					var b = new ApplicationDesiredState(application,siteKey, siteName);
+				var b = new ApplicationDesiredState(application, siteKey, siteName);
 
-					webApplicationList.Add(b);
+				webApplicationList.Add(b);
 
 			}
 
