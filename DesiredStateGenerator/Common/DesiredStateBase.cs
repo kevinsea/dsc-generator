@@ -29,29 +29,28 @@ namespace DesiredState.Common
 			this.Name = "";
 		}
 
-		public void AddAttribute(string paramName, string value)
+		public void AddAttribute(string paramName, object value)
 		{
 			var comment = "";
 
 			CreateAttribute(paramName, value, comment);
 		}
 
-		public void AddAttributeWithOverrideValue(string paramName, string value, string sourceServerValue)
+		public void AddAttributeWithOverrideValue(string paramName, object value, object sourceServerValue)
 		{
-			var comment = CodeGenHelpers.GetCommentOnOverride(value, sourceServerValue);
-
+			var comment = CodeGenHelpers.GetOverrideComment(value, sourceServerValue);
 
 			CreateAttribute(paramName, value, comment);
 		}
 
-		public void AddAttributeWithComment(string paramName, string value, string comment)
+		public void AddAttributeWithComment(string paramName, object value, string comment)
 		{
 			comment = "  # " + comment;
 
 			CreateAttribute(paramName, value, comment);
 		}
 
-		private void CreateAttribute(string paramName, string value, string comment)
+		private void CreateAttribute(string paramName, object value, string comment)
 		{
 			string code = CodeGenHelpers.FormatAttributeCode(paramName, value);
 
@@ -59,9 +58,10 @@ namespace DesiredState.Common
 
 			this.Attributes.Add(attrib);
 
+			// TODO this is messy, review
 			if (CodeGenHelpers.AreEqualCI(paramName, "name"))
 			{
-				this.Name = value;
+				this.Name = value.ToString();
 			}
 		}
 

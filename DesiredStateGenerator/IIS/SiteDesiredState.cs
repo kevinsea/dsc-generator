@@ -39,7 +39,7 @@ namespace DesiredState.IIS
 				this.AddAttribute("LogFileDirectory", iisSiteObject.LogFile.Directory);
 			}
 			
-			this.AddAttribute("DependsOn", "[cAppPool]" + PoolDesiredState.GetPoolVariableName(this.ApplicationPool));
+			this.AddAttribute("DependsOn", "[xWebAppPool]" + PoolDesiredState.GetPoolVariableName(this.ApplicationPool));
 
 			this.Bindings = GetBindings(iisSiteObject.Bindings);
 			this.Applications = GetApplications(iisSiteObject.Applications, this.Key, this.Name);

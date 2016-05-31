@@ -19,14 +19,14 @@ namespace DesiredState.IIS
 			this.AddAttribute("Name", iisPoolObject.Name);
 
 			if (iisOptions.KeepAppPoolsRunning)
-			{
-				this.AddAttributeWithOverrideValue("AutoStart", "True", iisPoolObject.AutoStart.ToString());
-			}
+				this.AddAttributeWithOverrideValue("AutoStart", true, iisPoolObject.AutoStart);
+			else
+				this.AddAttribute("AutoStart", iisPoolObject.AutoStart);
 
 			this.AddAttribute("ManagedPipelineMode", iisPoolObject.ManagedPipelineMode.ToString());
 			this.AddAttribute("ManagedRuntimeVersion", iisPoolObject.ManagedRuntimeVersion);
 			this.AddAttribute("IdentityType", iisPoolObject.ProcessModel.IdentityType.ToString());
-			this.AddAttribute("Enable32BitAppOnWin64", iisPoolObject.Enable32BitAppOnWin64.ToString());
+			this.AddAttribute("Enable32BitAppOnWin64", iisPoolObject.Enable32BitAppOnWin64);
 
 			if (iisOptions.StandardizeAppPoolRecycles)
 			{
@@ -60,7 +60,7 @@ namespace DesiredState.IIS
 			ScheduleCollection scheduleCollection = iisPoolObject.Recycling.PeriodicRestart.Schedule;
 
 			if (scheduleCollection.Count == 0)
-				return "";  //"\"\"";
+				return "";
 
 			string result = "";
 
@@ -71,7 +71,7 @@ namespace DesiredState.IIS
 
 		protected override string DscObjectType
 		{
-			get { return "cAppPool"; }
+			get { return "xWebAppPool"; }
 		}
 
 	}

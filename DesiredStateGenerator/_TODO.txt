@@ -1,0 +1,3 @@
+﻿
+- Determine what version of xWebAdministration is supported
+	- Investigate and document how to update xWebAdministration ('Install-Module -Name xWebAdministration -FORCE' to get the correct version of Web DSC?)

@@ -6,27 +6,28 @@ namespace DesiredState.Common
 	{
 		public const string Indent = "     ";
 
-		public static string GetCommentOnOverride(string value, string sourceServerValue)
+		public static string GetOverrideComment(object value, object sourceServerValue)
 		{
-			var comment = "";
+			if (sourceServerValue == null)
+				return "";
 
-			if (sourceServerValue != null)
+			string comment = "";
+			string valueString = ValueFormatter.Format(value);
+			string sourceServerValueString = ValueFormatter.Format(sourceServerValue);
+
+			if (sourceServerValueString != valueString)
 			{
-				if (sourceServerValue != value)
-				{
-					comment = "  # overriding " + sourceServerValue;
-				}
+				comment = "  # overriding " + sourceServerValueString;
 			}
+
 			return comment;
 		}
 
-		public static string FormatAttributeCode(string paramName, string value)
+		public static string FormatAttributeCode(string paramName, object value)
 		{
-			if ((value.StartsWith("@") == false) && (value.Contains("\n") == false))
-			{
-				value = "\"" + value + "\"";
-			}
-			return String.Format("{0} = {1}", paramName, value);
+			string valueString = ValueFormatter.Format(value);
+
+			return $"{paramName} = {valueString}";
 		}
 
 		public static string GetIndentString(int indentDepth)
