@@ -1,5 +1,8 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
+using System.Windows;
 using DesiredState.Common;
 using Microsoft.Web.Administration;
 
@@ -21,11 +24,19 @@ namespace DesiredState.IIS
 
 			foreach (var site in serverManager.Sites)
 			{
-				var siteName = site.Name;
-				var siteAuthDesiredStateList = authDesiredStateList.Where(a => CodeGenHelpers.AreEqualCI(a.SiteName, siteName));
-				var siteCode = new SiteDesiredState(site, siteAuthDesiredStateList, iisOptions);
+			    try
+			    {
+			        var siteName = site.Name;
+			        var siteAuthDesiredStateList = authDesiredStateList.Where(a => CodeGenHelpers.AreEqualCI(a.SiteName, siteName));
+			        var siteCode = new SiteDesiredState(site, siteAuthDesiredStateList, iisOptions);
 
-				siteCodeList.Add(siteCode);
+			        siteCodeList.Add(siteCode);
+			    }
+			    catch (Exception ex)
+			    {
+			        Trace.TraceError(ex.ToString());
+			        MessageBox.Show("Error generating config for site '" + site.Name + "'. No config is generated for this site.");
+			    }
 			}
 
 			return siteCodeList;
