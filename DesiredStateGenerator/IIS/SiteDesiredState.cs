@@ -30,11 +30,11 @@ namespace DesiredState.IIS
 
 			this.AddAttributeWithComment("PhysicalPath", rootApp.VirtualDirectories[0].PhysicalPath, "This folder must already exist");
 
-			string logAttributeName = "### Not in xWebsite, #132 will add something fancier: LogFileDirectory";
-			//if (iisOptions.StandardizeLogFileLocation)
-			//	this.AddAttributeWithOverrideValue(logAttributeName, @"D:\IISLogs", iisSiteObject.LogFile.Directory);
-			//else
-			this.AddAttribute(logAttributeName, iisSiteObject.LogFile.Directory);
+			string logAttributeName = "LogPath";
+			if (iisOptions.StandardizeLogFileLocation)
+				this.AddAttributeWithOverrideValue(logAttributeName, @"D:\IISLogs", iisSiteObject.LogFile.Directory);
+			else
+				this.AddAttribute(logAttributeName, iisSiteObject.LogFile.Directory);
 
 			this.AddAttribute("DependsOn", "[xWebAppPool]" + PoolDesiredState.GetPoolVariableName(this.ApplicationPool));
 

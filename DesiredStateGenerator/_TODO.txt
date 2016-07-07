@@ -1,3 +1,5 @@
 ﻿
-- Determine what version of xWebAdministration is supported
-	- Investigate and document how to update xWebAdministration ('Install-Module -Name xWebAdministration -FORCE' to get the correct version of Web DSC?)
+Document Powershell DSC Troubleshooting notes:
+- Set-ExecutionPolicy -ExecutionPolicy RemoteSigned
+- Enter-PSSession localhost needs to be successful for DSC to work
+- Enable-PSRemoting can fix permission issues
