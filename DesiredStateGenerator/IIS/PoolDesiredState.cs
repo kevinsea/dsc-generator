@@ -50,9 +50,9 @@ namespace DesiredState.IIS
 
 		}
 
-		internal static string GetPoolVariableName(string name)
+		internal static string GetPoolVariableName(string poolName)
 		{
-			return CodeGenHelpers.FormatKey(name) + "_Pool";
+			return CodeGenHelpers.FormatKey(poolName, "Pool");
 		}
 
 		private string GetScheduleString(ApplicationPool iisPoolObject)

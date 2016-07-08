@@ -63,7 +63,7 @@ namespace DesiredState.IIS
 
 		internal static string GetSiteKey(string siteName)
 		{
-			return CodeGenHelpers.FormatKey(siteName) + "_Site";
+			return CodeGenHelpers.FormatKey(siteName, "Site");
 		}
 
 		public List<string> GetPoolsReferenced()

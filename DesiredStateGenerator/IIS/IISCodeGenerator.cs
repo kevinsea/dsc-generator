@@ -53,7 +53,7 @@ namespace DesiredState.IIS
 			sb.AppendLine(indent + "# be found here: https://github.com/kevinsea/dsc-generator/wiki/Powershell-Modules");
 			sb.AppendLine(indent + "# ---------------------------------------------------------------------------------");
 			sb.AppendLine("");
-			sb.AppendLine(indent + "Import-DscResource -ModuleName xWebAdministration  # Needed for xWebSite, xWebAppPool, xWebVirtualDirectory & xWebApplication");
+			sb.AppendLine(indent + "Import-DscResource -ModuleName xWebAdministration");
 
 			return sb.ToString();
 		}
@@ -94,7 +94,7 @@ namespace DesiredState.IIS
 			StringBuilder sb = new StringBuilder();
 
 			sb.Append(CodeGenHelpers.Indent + CodeGenHelpers.Indent);
-			sb.AppendFormat("#================== '{0}' site definition ==================\n", site.Key);
+			sb.Append($"#================== '{site.Name}' site definition ==================\n");
 
 			return sb.ToString();
 		}

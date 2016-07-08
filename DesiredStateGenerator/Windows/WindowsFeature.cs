@@ -9,7 +9,7 @@ namespace DesiredState.Windows
 		public WindowsFeature(string variableName, string featureName, string ensureState
 						, string description = "")
 		{
-			this.Key = CodeGenHelpers.FormatKey(variableName) + "_Feature";
+			this.Key = CodeGenHelpers.FormatKey(variableName, "Feature");
 			this.ObjectDescription = description;
 
 			this.AddAttribute("Name", featureName);

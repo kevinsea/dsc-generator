@@ -15,7 +15,7 @@ namespace DesiredState.IIS
 			var elements = filter.Split('/');
 			var parentElementName = elements[elements.Length - 1];
 
-			this.Key = CodeGenHelpers.FormatKey(siteLocation + "_" + parentElementName.Replace("Authentication", "Auth") + "_" + propertyName);
+			this.Key = CodeGenHelpers.FormatKey(siteLocation + "_" + parentElementName.Replace("Authentication", "Auth") + "_" + propertyName, "xxx");
 
 			this.SiteLocation = siteLocation;
 			this.AddAttribute("Location", siteLocation);

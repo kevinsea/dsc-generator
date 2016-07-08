@@ -18,7 +18,7 @@ namespace DesiredState.IIS
 
 		private void Initialize(Application application, string siteKey, string siteName)
 		{
-			this.Key = GetApplicationVariableName(siteKey, application.Path);
+			this.Key = GetApplicationVariableName(siteName, application.Path);
 			this.IsRootApplication = (application.Path == "/");
 
 			AddAttribute("Name", application.Path);
@@ -58,5 +58,6 @@ namespace DesiredState.IIS
 		{
 			return CodeGenHelpers.FormatKey(name1, name2, "App");
 		}
+
 	}
 }
