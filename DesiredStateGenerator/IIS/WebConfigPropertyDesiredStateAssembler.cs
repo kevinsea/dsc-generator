@@ -7,7 +7,7 @@ namespace DesiredState.IIS
 	internal class WebConfigPropertyDesiredStateAssembler
 	{
 
-		public List<WebConfigPropertyDesiredState> GetAuthenticationDesiredStates()
+		public List<WebConfigPropertyDesiredState> GetWebConfigPropertyDesiredStates()
 		{
 			var masterList = new List<WebConfigPropertyDesiredState>(0);
 
@@ -28,7 +28,9 @@ namespace DesiredState.IIS
 			return masterList;
 		}
 
-
+		/// <summary>
+		/// Recursive method that goes that traverses the tree until it finds configuration attributes
+		/// </summary>
 		public void Traverse(XElement element, string nodePath, string sitelocation, List<WebConfigPropertyDesiredState> resultList)
 		{
 			if (element.HasElements)
@@ -65,11 +67,11 @@ namespace DesiredState.IIS
 		{
 			string filePath = Environment.GetFolderPath(Environment.SpecialFolder.System) + @"\inetsrv\config\applicationHost.config";
 
+			//TODO if this file does not exist, either skip attribute generation or throw an exception...or something else smart
 			XElement root = XElement.Load(filePath);
 
 			return root.Elements("location");
 		}
-
 
 	}
 }

@@ -27,7 +27,7 @@ namespace DesiredState.IIS
 
 		protected override string DscObjectType
 		{
-			get { return "PSHOrg_cWebConfigProp"; }
+			get { return "xWebConfigKeyValue"; }
 		}
 	}
 

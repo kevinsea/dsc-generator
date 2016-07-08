@@ -30,16 +30,13 @@ namespace DesiredState.IIS
 
 			this.AddAttributeWithComment("PhysicalPath", rootApp.VirtualDirectories[0].PhysicalPath, "This folder must already exist");
 
+			string logAttributeName = "LogPath";
 			if (iisOptions.StandardizeLogFileLocation)
-			{
-				this.AddAttributeWithOverrideValue("LogFileDirectory", @"D:\IISLogs", iisSiteObject.LogFile.Directory); 
-			}
+				this.AddAttributeWithOverrideValue(logAttributeName, @"D:\IISLogs", iisSiteObject.LogFile.Directory);
 			else
-			{
-				this.AddAttribute("LogFileDirectory", iisSiteObject.LogFile.Directory);
-			}
-			
-			this.AddAttribute("DependsOn", "[cAppPool]" + PoolDesiredState.GetPoolVariableName(this.ApplicationPool));
+				this.AddAttribute(logAttributeName, iisSiteObject.LogFile.Directory);
+
+			this.AddAttribute("DependsOn", "[xWebAppPool]" + PoolDesiredState.GetPoolVariableName(this.ApplicationPool));
 
 			this.Bindings = GetBindings(iisSiteObject.Bindings);
 			this.Applications = GetApplications(iisSiteObject.Applications, this.Key, this.Name);
@@ -53,14 +50,15 @@ namespace DesiredState.IIS
 			var code = "";
 			code += GetChildListCode("BindingInfo", this.Bindings.ToList<DesiredStateBase>(), baseIndentDepth, baseIndent);
 
-			code += GetChildListCode("WebConfigProp", this.AuthDesiredStateList.ToList<DesiredStateBase>(), baseIndentDepth, baseIndent);
+			code += "<#" + GetChildListCode("**** this needs to be hand translated to MS DSC (MSFT_xWebAuthenticationInformation for auth config): \n"
+					+ baseIndent + "WebConfigProp", this.AuthDesiredStateList.ToList<DesiredStateBase>(), baseIndentDepth, baseIndent) + "#>";
 
 			return code;
 		}
 
 		protected override string DscObjectType
 		{
-			get { return "cWebSite"; }
+			get { return "xWebSite"; }
 		}
 
 		internal static string GetSiteKey(string siteName)
@@ -108,9 +106,9 @@ namespace DesiredState.IIS
 			foreach (var application in applications)
 			{
 
-					var b = new ApplicationDesiredState(application,siteKey, siteName);
+				var b = new ApplicationDesiredState(application, siteKey, siteName);
 
-					webApplicationList.Add(b);
+				webApplicationList.Add(b);
 
 			}
 

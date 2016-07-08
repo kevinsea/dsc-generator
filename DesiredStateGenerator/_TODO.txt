@@ -1,0 +1,5 @@
+﻿
+Document Powershell DSC Troubleshooting notes:
+- Set-ExecutionPolicy -ExecutionPolicy RemoteSigned
+- Enter-PSSession localhost needs to be successful for DSC to work
+- Enable-PSRemoting can fix permission issues

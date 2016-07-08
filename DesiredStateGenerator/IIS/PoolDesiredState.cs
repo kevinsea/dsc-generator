@@ -19,18 +19,18 @@ namespace DesiredState.IIS
 			this.AddAttribute("Name", iisPoolObject.Name);
 
 			if (iisOptions.KeepAppPoolsRunning)
-			{
-				this.AddAttributeWithOverrideValue("AutoStart", "True", iisPoolObject.AutoStart.ToString());
-			}
+				this.AddAttributeWithOverrideValue("AutoStart", true, iisPoolObject.AutoStart);
+			else
+				this.AddAttribute("AutoStart", iisPoolObject.AutoStart);
 
 			this.AddAttribute("ManagedPipelineMode", iisPoolObject.ManagedPipelineMode.ToString());
 			this.AddAttribute("ManagedRuntimeVersion", iisPoolObject.ManagedRuntimeVersion);
 			this.AddAttribute("IdentityType", iisPoolObject.ProcessModel.IdentityType.ToString());
-			this.AddAttribute("Enable32BitAppOnWin64", iisPoolObject.Enable32BitAppOnWin64.ToString());
+			this.AddAttribute("Enable32BitAppOnWin64", iisPoolObject.Enable32BitAppOnWin64);
 
 			if (iisOptions.StandardizeAppPoolRecycles)
 			{
-				this.AddAttributeWithOverrideValue("RestartSchedule", "@(\"02:00:00\")", GetScheduleString(iisPoolObject));
+				this.AddAttributeWithOverrideValue("RestartSchedule", "@('02:00:00')", GetScheduleString(iisPoolObject));
 			}
 			else
 			{
@@ -60,18 +60,18 @@ namespace DesiredState.IIS
 			ScheduleCollection scheduleCollection = iisPoolObject.Recycling.PeriodicRestart.Schedule;
 
 			if (scheduleCollection.Count == 0)
-				return "";  //"\"\"";
+				return "";
 
 			string result = "";
 
 			result += string.Join(", ",  scheduleCollection.Select(s => s.Time));
 
-			return   "@(\""+ result.Trim() +"\")" ;
+			return   "@('"+ result.Trim() +"')" ;
 		}
 
 		protected override string DscObjectType
 		{
-			get { return "cAppPool"; }
+			get { return "xWebAppPool"; }
 		}
 
 	}
