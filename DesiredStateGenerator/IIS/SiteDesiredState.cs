@@ -39,6 +39,7 @@ namespace DesiredState.IIS
 			this.AddAttribute("DependsOn", "[xWebAppPool]" + PoolDesiredState.GetPoolVariableName(this.ApplicationPool));
 
 			this.Bindings = GetBindings(iisSiteObject.Bindings);
+
 			this.Applications = GetApplications(iisSiteObject.Applications, this.Key, this.Name);
 			this.AuthDesiredStateList.AddRange(authDesiredStateList);
 		}
@@ -48,9 +49,9 @@ namespace DesiredState.IIS
 			string baseIndent = CodeGenHelpers.GetIndentString(baseIndentDepth);
 
 			var code = "";
-			code += GetChildListCode("BindingInfo", this.Bindings.ToList<DesiredStateBase>(), baseIndentDepth, baseIndent);
+			code += CodeGenHelpers.GetChildListCode("BindingInfo", this.Bindings.ToList<DesiredStateBase>(), baseIndentDepth, baseIndent);
 
-			code += "<#" + GetChildListCode("**** this needs to be hand translated to MS DSC (MSFT_xWebAuthenticationInformation for auth config): \n"
+			code += "<#" + CodeGenHelpers.GetChildListCode("**** this needs to be hand translated to MS DSC (MSFT_xWebAuthenticationInformation for auth config): \n"
 					+ baseIndent + "WebConfigProp", this.AuthDesiredStateList.ToList<DesiredStateBase>(), baseIndentDepth, baseIndent) + "#>";
 
 			return code;

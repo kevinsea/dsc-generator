@@ -96,28 +96,7 @@ namespace DesiredState.Common
 
 		public virtual string GetChildCode(int baseIndentDepth)
 		{
-			return "";
-		}
-
-		protected string GetChildListCode(string propertyName, List<DesiredStateBase> childList, int baseIndentDepth, string baseIndent)
-		{
-			string code = baseIndent + propertyName + " = \n";
-
-			if (childList.Count == 0)
-			{
-				return "";
-			}
-			else
-			{
-				code += baseIndent + CodeGenHelpers.Indent + CodeGenHelpers.Indent + "@(\n";
-
-				foreach (var child in childList)
-				{
-					code += child.GetCode(baseIndentDepth + 3, CodeGenType.MultiChild) + "";
-				}
-				code += baseIndent + CodeGenHelpers.Indent + CodeGenHelpers.Indent + ")\n";
-			}
-			return code;
+			return "";  //the default is no child code
 		}
 
 		public class Attribute
