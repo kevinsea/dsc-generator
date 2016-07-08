@@ -50,7 +50,8 @@ namespace DesiredState.IIS
 			var code = "";
 			code += GetChildListCode("BindingInfo", this.Bindings.ToList<DesiredStateBase>(), baseIndentDepth, baseIndent);
 
-			code += GetChildListCode("WebConfigProp", this.AuthDesiredStateList.ToList<DesiredStateBase>(), baseIndentDepth, baseIndent);
+			code += "<#" + GetChildListCode("**** this needs to be hand translated to MS DSC (MSFT_xWebAuthenticationInformation for auth config): \n"
+					+ baseIndent + "WebConfigProp", this.AuthDesiredStateList.ToList<DesiredStateBase>(), baseIndentDepth, baseIndent) + "#>";
 
 			return code;
 		}

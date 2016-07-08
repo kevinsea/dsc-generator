@@ -29,7 +29,7 @@ namespace DesiredState.Common
 		{
 			if (value.StartsWith("@") == false) // encapsulate all strings except code blocks in quotes
 			{
-				value = $"\"{value}\"";
+				value = $"'{value}'";
 			}
 			return value;
 		}

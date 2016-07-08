@@ -22,8 +22,9 @@ namespace DesiredState.IIS
 			foreach (var site in serverManager.Sites)
 			{
 				var siteName = site.Name;
-				var siteAuthDesiredStateList = new List<WebConfigPropertyDesiredState>(); // TODO reimplement this for the MS xWeb modules
-					//configPropDesiredStateList.Where(a => CodeGenHelpers.AreEqualCI(a.SiteName, siteName));
+				var siteAuthDesiredStateList = configPropDesiredStateList.Where(a => CodeGenHelpers.AreEqualCI(a.SiteName, siteName));
+				//new List<WebConfigPropertyDesiredState>(); // TODO reimplement this for the MS xWeb modules
+
 				var siteCode = new SiteDesiredState(site, siteAuthDesiredStateList, iisOptions);
 
 				siteCodeList.Add(siteCode);

@@ -30,7 +30,7 @@ namespace DesiredState.IIS
 
 			if (iisOptions.StandardizeAppPoolRecycles)
 			{
-				this.AddAttributeWithOverrideValue("RestartSchedule", "@(\"02:00:00\")", GetScheduleString(iisPoolObject));
+				this.AddAttributeWithOverrideValue("RestartSchedule", "@('02:00:00')", GetScheduleString(iisPoolObject));
 			}
 			else
 			{
@@ -66,7 +66,7 @@ namespace DesiredState.IIS
 
 			result += string.Join(", ",  scheduleCollection.Select(s => s.Time));
 
-			return   "@(\""+ result.Trim() +"\")" ;
+			return   "@('"+ result.Trim() +"')" ;
 		}
 
 		protected override string DscObjectType
