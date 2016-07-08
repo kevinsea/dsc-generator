@@ -75,7 +75,7 @@ namespace DesiredState.Common
 			return string.Equals(a, b, StringComparison.OrdinalIgnoreCase);
 		}
 
-		internal static string GetChildListCode(string propertyName, List<DesiredStateBase> childList, int baseIndentDepth, string baseIndent)
+		internal static string GenerateChildListCode(string propertyName, List<DesiredStateBase> childList, int baseIndentDepth, string baseIndent)
 		{
 			string code = baseIndent + propertyName + " = \n";
 

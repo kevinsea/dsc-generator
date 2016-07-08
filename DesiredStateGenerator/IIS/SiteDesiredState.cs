@@ -49,9 +49,9 @@ namespace DesiredState.IIS
 			string baseIndent = CodeGenHelpers.GetIndentString(baseIndentDepth);
 
 			var code = "";
-			code += CodeGenHelpers.GetChildListCode("BindingInfo", this.Bindings.ToList<DesiredStateBase>(), baseIndentDepth, baseIndent);
+			code += CodeGenHelpers.GenerateChildListCode("BindingInfo", this.Bindings.ToList<DesiredStateBase>(), baseIndentDepth, baseIndent);
 
-			code += "<#" + CodeGenHelpers.GetChildListCode("**** this needs to be hand translated to MS DSC (MSFT_xWebAuthenticationInformation for auth config): \n"
+			code += "<#" + CodeGenHelpers.GenerateChildListCode("**** this needs to be hand translated to MS DSC (MSFT_xWebAuthenticationInformation for auth config): \n"
 					+ baseIndent + "WebConfigProp", this.AuthDesiredStateList.ToList<DesiredStateBase>(), baseIndentDepth, baseIndent) + "#>";
 
 			return code;
