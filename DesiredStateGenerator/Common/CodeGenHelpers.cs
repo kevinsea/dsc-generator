@@ -42,7 +42,7 @@ namespace DesiredState.Common
 
 		internal static string FormatKey(string objectName, string type)
 		{
-			return FormatKey(objectName) + "__" + type;
+			return FormatKey(objectName) + "_" + type;
 		}
 
 		private static string FormatKey(string name)
@@ -57,7 +57,7 @@ namespace DesiredState.Common
 				return "Root";
 			}
 
-			name = name.Replace(" ", "_");
+			name = name.Replace(" ", "");
 			name = name.Replace("/", "");
 
 			return name;
@@ -65,7 +65,7 @@ namespace DesiredState.Common
 
 		internal static string FormatKey(string name1, string name2, string type)
 		{
-			return FormatKey(name1) + "_" + FormatKey(name2) + "__" + type;
+			return FormatKey(name1) + "_" + FormatKey(name2) + "_" + type;
 		}
 
 		// ReSharper disable once InconsistentNaming
