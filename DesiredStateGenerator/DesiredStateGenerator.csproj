@@ -101,9 +101,11 @@
       <SubType>Designer</SubType>
     </ApplicationDefinition>
     <Compile Include="Common\ValueFormatter.cs" />
-    <Compile Include="IIS\WebConfigPropertyDesiredStateAssembler.cs" />
+    <Compile Include="IIS\WebAuthenticationFactory.cs" />
+    <Compile Include="IIS\WebAuthenticationInformation.cs" />
+    <Compile Include="IIS\WebConfigEntryAssembler.cs" />
     <Compile Include="IIS\IISCodeGenerator.cs" />
-    <Compile Include="IIS\WebConfigPropertyDesiredState.cs" />
+    <Compile Include="IIS\WebConfigEntry.cs" />
     <Compile Include="IIS\IISObjectFactory.cs" />
     <Compile Include="IIS\VirtualDirectoryDesiredState.cs" />
     <Compile Include="Windows\WindowsFeature.cs" />

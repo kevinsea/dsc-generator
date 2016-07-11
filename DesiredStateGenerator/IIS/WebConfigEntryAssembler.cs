@@ -4,18 +4,18 @@ using System.Xml.Linq;
 
 namespace DesiredState.IIS
 {
-	internal class WebConfigPropertyDesiredStateAssembler
+	internal class WebConfigEntryAssembler
 	{
 
-		public List<WebConfigPropertyDesiredState> GetWebConfigPropertyDesiredStates()
+		public List<WebConfigEntry> GetWebConfigEntries()
 		{
-			var masterList = new List<WebConfigPropertyDesiredState>(0);
+			var masterList = new List<WebConfigEntry>(0);
 
 			var locationElements = LoadLocationElements();
 
 			foreach (XElement locationElement in locationElements)
 			{
-				var attributeList = new List<WebConfigPropertyDesiredState>();
+				var attributeList = new List<WebConfigEntry>();
 
 				if (locationElement.Attribute("path") != null)
 				{
@@ -31,7 +31,7 @@ namespace DesiredState.IIS
 		/// <summary>
 		/// Recursive method that goes that traverses the tree until it finds configuration attributes
 		/// </summary>
-		public void Traverse(XElement element, string nodePath, string sitelocation, List<WebConfigPropertyDesiredState> resultList)
+		public void Traverse(XElement element, string nodePath, string sitelocation, List<WebConfigEntry> resultList)
 		{
 			if (element.HasElements)
 			{
@@ -48,19 +48,18 @@ namespace DesiredState.IIS
 			}
 		}
 
-		public List<WebConfigPropertyDesiredState> BuildEntry(XElement element, string nodePath, string sitelocation)
+		public List<WebConfigEntry> BuildEntry(XElement element, string nodePath, string sitelocation)
 		{
-			var attributes = new List<WebConfigPropertyDesiredState>();
+			var configEntries = new List<WebConfigEntry>();
 
 			foreach (var property in element.Attributes())
 			{
-				var desiredState = new WebConfigPropertyDesiredState(nodePath, property.Name.LocalName
-															, property.Value, sitelocation);
+				var configEntry = new WebConfigEntry(element.Name.LocalName,nodePath, element.Attributes(), sitelocation);
 
-				attributes.Add(desiredState);
+				configEntries.Add(configEntry);
 			}
 
-			return attributes;
+			return configEntries;
 		}
 
 		private static IEnumerable<XElement> LoadLocationElements()

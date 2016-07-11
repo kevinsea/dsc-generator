@@ -9,12 +9,14 @@ namespace DesiredState.IIS
 	{
 		public List<IPBindingDesiredState> Bindings = new List<IPBindingDesiredState>();
 		public List<ApplicationDesiredState> Applications = new List<ApplicationDesiredState>();
-		public List<WebConfigPropertyDesiredState> AuthDesiredStateList = new List<WebConfigPropertyDesiredState>();
+		public List<WebConfigEntry> AllWebConfigEntryList = new List<WebConfigEntry>();
+
+		public WebAuthenticationInformation WebAuthenticationInfo;
 
 		private string ApplicationPool { get; set; }
 
 		public SiteDesiredState(Site iisSiteObject
-								, IEnumerable<WebConfigPropertyDesiredState> authDesiredStateList
+								, IEnumerable<WebConfigEntry> configEntries
 								, IISCodeGenerator.IisPoolAndSitesOptions iisOptions)
 		{
 			var rootApp = iisSiteObject.Applications[0];
@@ -40,8 +42,16 @@ namespace DesiredState.IIS
 
 			this.Bindings = GetBindings(iisSiteObject.Bindings);
 
-			this.Applications = GetApplications(iisSiteObject.Applications, this.Key, this.Name);
-			this.AuthDesiredStateList.AddRange(authDesiredStateList);
+			var authConfigEntries = configEntries.Where(c => c.SiteLocation == iisSiteObject.Name);
+
+			if(authConfigEntries != null  && authConfigEntries.Count() > 0)
+			{
+				this.WebAuthenticationInfo = new WebAuthenticationInformation(authConfigEntries);
+			}
+
+			this.Applications = GetApplications(iisSiteObject.Applications, this.Key, this.Name, configEntries);
+
+            this.AllWebConfigEntryList.AddRange(configEntries);
 		}
 
 		public override string GetChildCode(int baseIndentDepth)
@@ -51,8 +61,8 @@ namespace DesiredState.IIS
 			var code = "";
 			code += CodeGenHelpers.GenerateChildListCode("BindingInfo", this.Bindings.ToList<DesiredStateBase>(), baseIndentDepth, baseIndent);
 
-			code += "<#" + CodeGenHelpers.GenerateChildListCode("**** this needs to be hand translated to MS DSC (MSFT_xWebAuthenticationInformation for auth config): \n"
-					+ baseIndent + "WebConfigProp", this.AuthDesiredStateList.ToList<DesiredStateBase>(), baseIndentDepth, baseIndent) + "#>";
+			if (WebAuthenticationInfo !=null)
+				code += baseIndent + "AuthenticationInfo = \n" + this.WebAuthenticationInfo.GetCode(baseIndentDepth + 2, CodeGenType.SingleChild);
 
 			return code;
 		}
@@ -100,13 +110,14 @@ namespace DesiredState.IIS
 			return siteBindingList;
 		}
 
-		private List<ApplicationDesiredState> GetApplications(ApplicationCollection applications, string siteKey, string siteName)
+		private List<ApplicationDesiredState> GetApplications(ApplicationCollection applications, string siteKey
+												, string siteName, IEnumerable<WebConfigEntry> configEntries)
 		{
 			var webApplicationList = new List<ApplicationDesiredState>();
 
 			foreach (var application in applications)
 			{
-
+				var authConfigEntry = configEntries.Where(c => c.SiteLocation == application.Path).FirstOrDefault();
 				var b = new ApplicationDesiredState(application, siteKey, siteName);
 
 				webApplicationList.Add(b);

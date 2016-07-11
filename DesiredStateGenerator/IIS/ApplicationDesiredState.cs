@@ -49,14 +49,15 @@ namespace DesiredState.IIS
 			return virtualDirectoryList;
 		}
 
-		protected override string DscObjectType
-		{
-			get { return "xWebApplication"; }
-		}
 
 		public static string GetApplicationVariableName(string name1, string name2)
 		{
 			return CodeGenHelpers.FormatKey(name1, name2, "App");
+		}
+
+		protected override string DscObjectType
+		{
+			get { return "xWebApplication"; }
 		}
 
 	}
