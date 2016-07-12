@@ -25,6 +25,13 @@ namespace DesiredState.IIS
 			sb.AppendLine(baseIndent + "# Note this code does not detect server level IIS overrides (it assumes the IIS level settings");
 			sb.AppendLine(baseIndent + "# have not been overriden).  See the wiki for information about detecting server level changes.\n");
 
+			if (options.StandardizeLogFileLocation)
+			sb.AppendLine(baseIndent + @"$logFilePath = 'D:\IISLogs'");
+
+			if (options.StandardizeAppPoolRecycles)
+				sb.AppendLine(baseIndent + @"$appPoolRecycleHour = '02'");
+			sb.AppendLine(baseIndent);
+
 			if (options.IisPoolAndSitesGenerationMode == IisPoolAndSitesGenerationMode.ConfigFileOrder)
 			{
 				code = GeneratePools(pools);

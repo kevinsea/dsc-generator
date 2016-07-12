@@ -12,7 +12,7 @@ namespace DesiredState.Common
 		{
 			string valueString;
 
-			if (value.GetType() == typeof(bool))
+			if (value is bool)
 				valueString = ValueFormatter.Boolean((bool)value);
 			else
 				valueString = ValueFormatter.String(value.ToString());
@@ -27,11 +27,13 @@ namespace DesiredState.Common
 
 		private static string String(string value)
 		{
-			if (value.StartsWith("@") == false) // encapsulate all strings except code blocks in quotes
-			{
-				value = $"'{value}'";
-			}
-			return value;
+			if (value.StartsWith("@")) // don't encapsulate code blocks in quotes
+				return value;
+			if (value.StartsWith("$")) // don't encapsulate variables in quotes
+				return value;
+			else
+				return $"\"{value}\"";
+			
 		}
 
 	}

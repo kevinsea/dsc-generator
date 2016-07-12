@@ -34,7 +34,7 @@ namespace DesiredState.IIS
 
 			string logAttributeName = "LogPath";
 			if (iisOptions.StandardizeLogFileLocation)
-				this.AddAttributeWithOverrideValue(logAttributeName, @"D:\IISLogs", iisSiteObject.LogFile.Directory);
+				this.AddAttributeWithOverrideValue(logAttributeName, "$logFilePath", iisSiteObject.LogFile.Directory);
 			else
 				this.AddAttribute(logAttributeName, iisSiteObject.LogFile.Directory);
 
