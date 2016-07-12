@@ -3,3 +3,7 @@ Document Powershell DSC Troubleshooting notes:
 - Set-ExecutionPolicy -ExecutionPolicy RemoteSigned
 - Enter-PSSession localhost needs to be successful for DSC to work
 - Enable-PSRemoting can fix permission issues
+
+ - Unblock files from the internet Get-ChildItem -Path 'C:\Program Files\WindowsPowerShell\Modules\' -Recurse | Unblock-File
+ - Copy files into notepad to scrub them of extraneous chars
+ - PS v5 seems to treat local DSC differntly - does the v5 syntax provide better ways to run local DSC?

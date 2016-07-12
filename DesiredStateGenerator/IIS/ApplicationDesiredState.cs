@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using DesiredState.Common;
 using Microsoft.Web.Administration;
+using DesiredState.IIS;
 
 namespace DesiredState.IIS
 {
@@ -8,15 +9,15 @@ namespace DesiredState.IIS
 	{
 		public bool IsRootApplication { get; private set; }
 		public string ApplicationPool { get; set; }
-
 		public List<VirtualDirectoryDesiredState> VirtualDirectories = new List<VirtualDirectoryDesiredState>();
+		public WebAuthenticationInformation AuthenticationInfo;
 
-		public ApplicationDesiredState(Application application, string siteKey, string siteName)
+		public ApplicationDesiredState(Application application, string siteKey, string siteName, WebAuthenticationInformation authInfo)
 		{
-			Initialize(application, siteKey, siteName);
+			Initialize(application, siteKey, siteName, authInfo);
 		}
 
-		private void Initialize(Application application, string siteKey, string siteName)
+		private void Initialize(Application application, string siteKey, string siteName, WebAuthenticationInformation authInfo)
 		{
 			this.Key = GetApplicationVariableName(siteName, application.Path);
 			this.IsRootApplication = (application.Path == "/");
@@ -32,6 +33,7 @@ namespace DesiredState.IIS
 			AddAttribute("DependsOn", "[xWebAppPool]" + PoolDesiredState.GetPoolVariableName(application.ApplicationPoolName));
 
 			this.VirtualDirectories = GetVirtualDirectories(application.VirtualDirectories, siteName, application.Path);
+			this.AuthenticationInfo = authInfo;
 		}
 
 		private List<VirtualDirectoryDesiredState> GetVirtualDirectories(
@@ -53,6 +55,19 @@ namespace DesiredState.IIS
 		public static string GetApplicationVariableName(string name1, string name2)
 		{
 			return CodeGenHelpers.FormatKey(name1, name2, "App");
+		}
+
+
+		public override string GetChildCode(int baseIndentDepth)
+		{
+			string baseIndent = CodeGenHelpers.GetIndentString(baseIndentDepth);
+
+			string code = "";
+
+			if (AuthenticationInfo != null)
+				code += baseIndent + "AuthenticationInfo = \n" + this.AuthenticationInfo.GetCode(baseIndentDepth + 2, CodeGenType.SingleChild);
+
+			return code;
 		}
 
 		protected override string DscObjectType

@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System.Collections;
+using System.Collections.Generic;
 using System.Linq;
 using DesiredState.Common;
 using Microsoft.Web.Administration;
@@ -10,8 +11,7 @@ namespace DesiredState.IIS
 		public List<IPBindingDesiredState> Bindings = new List<IPBindingDesiredState>();
 		public List<ApplicationDesiredState> Applications = new List<ApplicationDesiredState>();
 		public List<WebConfigEntry> AllWebConfigEntryList = new List<WebConfigEntry>();
-
-		public WebAuthenticationInformation WebAuthenticationInfo;
+		public WebAuthenticationInformation AuthenticationInfo;
 
 		private string ApplicationPool { get; set; }
 
@@ -42,27 +42,38 @@ namespace DesiredState.IIS
 
 			this.Bindings = GetBindings(iisSiteObject.Bindings);
 
-			var authConfigEntries = configEntries.Where(c => c.SiteLocation == iisSiteObject.Name);
+			Dictionary<string, WebAuthenticationInformation> authEntries = GetAuthenticationConfigurations(configEntries);
+		
+			authEntries.TryGetValue(iisSiteObject.Name, out this.AuthenticationInfo);
 
-			if(authConfigEntries != null  && authConfigEntries.Count() > 0)
+			this.Applications = GetApplications(iisSiteObject.Applications, this.Key, this.Name, authEntries);
+
+			//todo this.AllWebConfigEntryList.AddRange(configEntries);
+		}
+
+		private Dictionary<string, WebAuthenticationInformation> GetAuthenticationConfigurations(IEnumerable<WebConfigEntry> authConfigEntries)
+		{
+			var results  =new Dictionary<string, WebAuthenticationInformation>();
+
+			IEnumerable<IGrouping<string, WebConfigEntry>> configEntryGroups = authConfigEntries.GroupBy(a => a.Location);
+
+			foreach (var configEntriesByLocation in configEntryGroups)
 			{
-				this.WebAuthenticationInfo = new WebAuthenticationInformation(authConfigEntries);
+				results.Add(configEntriesByLocation.Key,new WebAuthenticationInformation(configEntriesByLocation));
 			}
 
-			this.Applications = GetApplications(iisSiteObject.Applications, this.Key, this.Name, configEntries);
-
-            this.AllWebConfigEntryList.AddRange(configEntries);
+			return results;
 		}
 
 		public override string GetChildCode(int baseIndentDepth)
 		{
 			string baseIndent = CodeGenHelpers.GetIndentString(baseIndentDepth);
 
-			var code = "";
+			string code = "";
 			code += CodeGenHelpers.GenerateChildListCode("BindingInfo", this.Bindings.ToList<DesiredStateBase>(), baseIndentDepth, baseIndent);
 
-			if (WebAuthenticationInfo !=null)
-				code += baseIndent + "AuthenticationInfo = \n" + this.WebAuthenticationInfo.GetCode(baseIndentDepth + 2, CodeGenType.SingleChild);
+			if (AuthenticationInfo != null)
+				code += baseIndent + "AuthenticationInfo = \n" + this.AuthenticationInfo.GetCode(baseIndentDepth + 2, CodeGenType.SingleChild);
 
 			return code;
 		}
@@ -111,17 +122,18 @@ namespace DesiredState.IIS
 		}
 
 		private List<ApplicationDesiredState> GetApplications(ApplicationCollection applications, string siteKey
-												, string siteName, IEnumerable<WebConfigEntry> configEntries)
+												, string siteName, Dictionary<string,WebAuthenticationInformation> authEntries)
 		{
 			var webApplicationList = new List<ApplicationDesiredState>();
 
 			foreach (var application in applications)
 			{
-				var authConfigEntry = configEntries.Where(c => c.SiteLocation == application.Path).FirstOrDefault();
-				var b = new ApplicationDesiredState(application, siteKey, siteName);
+				WebAuthenticationInformation authInfo;
+				authEntries.TryGetValue(siteName + application.Path, out authInfo);
 
-				webApplicationList.Add(b);
-
+				var app = new ApplicationDesiredState(application, siteKey, siteName, authInfo);
+				
+				webApplicationList.Add(app);
 			}
 
 			return webApplicationList;

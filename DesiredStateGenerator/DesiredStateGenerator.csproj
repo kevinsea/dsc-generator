@@ -101,7 +101,6 @@
       <SubType>Designer</SubType>
     </ApplicationDefinition>
     <Compile Include="Common\ValueFormatter.cs" />
-    <Compile Include="IIS\WebAuthenticationFactory.cs" />
     <Compile Include="IIS\WebAuthenticationInformation.cs" />
     <Compile Include="IIS\WebConfigEntryAssembler.cs" />
     <Compile Include="IIS\IISCodeGenerator.cs" />

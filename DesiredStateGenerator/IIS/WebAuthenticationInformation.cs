@@ -16,12 +16,17 @@ namespace DesiredState.IIS
 			bool isEnabled;
 			foreach (var entry in configEntries)
 			{
-				string attributeName = entry.Name.Replace("Authentication", "");
-				attributeName = attributeName.Substring(0,1).ToUpper() + attributeName.Substring(1);
+				if (entry.Filter.StartsWith("/system.webServer/security/authentication/"))  //TODO move this so auth config is divided earlier in the process
+				{
+					string attributeName = entry.Name.Replace("Authentication", "");
+					attributeName = attributeName.Substring(0, 1).ToUpper() + attributeName.Substring(1);
 
-				if (bool.TryParse(entry.Attributes.Where(a => a.Name == "enabled").First().Value, out isEnabled))
-					AddAttribute(attributeName, isEnabled);
+					if (bool.TryParse(entry.Attributes.First(a => a.Name == "enabled").Value, out isEnabled))
+						AddAttribute(attributeName, isEnabled);
+				}
+
 			}
+
 
 			//Anonymous = $true
 			//Basic = $true
