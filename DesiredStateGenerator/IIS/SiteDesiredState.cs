@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using DesiredState.Common;
@@ -6,139 +7,154 @@ using Microsoft.Web.Administration;
 
 namespace DesiredState.IIS
 {
-	internal class SiteDesiredState : DesiredStateBase
-	{
-		public List<IPBindingDesiredState> Bindings = new List<IPBindingDesiredState>();
-		public List<ApplicationDesiredState> Applications = new List<ApplicationDesiredState>();
-		public List<WebConfigEntry> AllWebConfigEntryList = new List<WebConfigEntry>();
-		public WebAuthenticationInformation AuthenticationInfo;
+    internal class SiteDesiredState : DesiredStateBase
+    {
+        public List<IPBindingDesiredState> Bindings = new List<IPBindingDesiredState>();
+        public List<ApplicationDesiredState> Applications = new List<ApplicationDesiredState>();
+        public List<WebConfigEntry> AllWebConfigEntryList = new List<WebConfigEntry>();
+        public WebAuthenticationInformation AuthenticationInfo;
 
-		private string ApplicationPool { get; set; }
+        private string ApplicationPool { get; set; }
 
-		public SiteDesiredState(Site iisSiteObject
-								, IEnumerable<WebConfigEntry> configEntries
-								, IISCodeGenerator.IisPoolAndSitesOptions iisOptions)
-		{
-			var rootApp = iisSiteObject.Applications[0];
+        public SiteDesiredState(Site iisSiteObject
+                                , IEnumerable<WebConfigEntry> configEntries
+                                , IISCodeGenerator.IisPoolAndSitesOptions iisOptions)
+        {
+            var rootApp = iisSiteObject.Applications[0];
 
-			this.Key = GetSiteKey(iisSiteObject.Name);
+            this.Key = GetSiteKey(iisSiteObject.Name);
 
-			this.AddAttribute("Name", iisSiteObject.Name);
-			this.AddAttribute("Ensure", "Present");
-			this.AddAttribute("State", iisSiteObject.State.ToString());
+            this.AddAttribute("Name", iisSiteObject.Name);
+            this.AddAttribute("Ensure", "Present");
+            this.AddAttribute("State", iisSiteObject.State.ToString());
 
-			this.ApplicationPool = rootApp.ApplicationPoolName;
-			this.AddAttribute("ApplicationPool", this.ApplicationPool);
+            this.ApplicationPool = rootApp.ApplicationPoolName;
+            this.AddAttribute("ApplicationPool", this.ApplicationPool);
 
-			this.AddAttributeWithComment("PhysicalPath", rootApp.VirtualDirectories[0].PhysicalPath, "This folder must already exist");
+            this.AddAttributeWithComment("PhysicalPath", rootApp.VirtualDirectories[0].PhysicalPath, "This folder must already exist");
 
-			string logAttributeName = "LogPath";
-			if (iisOptions.StandardizeLogFileLocation)
-				this.AddAttributeWithOverrideValue(logAttributeName, "$logFilePath", iisSiteObject.LogFile.Directory);
-			else
-				this.AddAttribute(logAttributeName, iisSiteObject.LogFile.Directory);
+            string logAttributeName = "LogPath";
+            if (iisOptions.StandardizeLogFileLocation)
+                this.AddAttributeWithOverrideValue(logAttributeName, "$logFilePath", iisSiteObject.LogFile.Directory);
+            else
+                this.AddAttribute(logAttributeName, iisSiteObject.LogFile.Directory);
 
-			this.AddAttribute("DependsOn", "[xWebAppPool]" + PoolDesiredState.GetPoolVariableName(this.ApplicationPool));
+            this.AddAttribute("DependsOn", "[xWebAppPool]" + PoolDesiredState.GetPoolVariableName(this.ApplicationPool));
 
-			this.Bindings = GetBindings(iisSiteObject.Bindings);
+            this.Bindings = GetBindings(iisSiteObject.Bindings);
 
-			Dictionary<string, WebAuthenticationInformation> authEntries = GetAuthenticationConfigurations(configEntries);
-		
-			authEntries.TryGetValue(iisSiteObject.Name, out this.AuthenticationInfo);
+            this.AuthenticationInfo = GetSiteAuthenticationConfiguration(configEntries, iisSiteObject.Name);
 
-			this.Applications = GetApplications(iisSiteObject.Applications, this.Key, this.Name, authEntries);
+            Dictionary<string, WebAppAuthenticationInformation> authEntries = GetAppsAuthenticationConfigurations(configEntries);
 
-			//todo this.AllWebConfigEntryList.AddRange(configEntries);
-		}
+        
+            this.Applications = GetApplications(iisSiteObject.Applications, this.Key, this.Name, authEntries);
 
-		private Dictionary<string, WebAuthenticationInformation> GetAuthenticationConfigurations(IEnumerable<WebConfigEntry> authConfigEntries)
-		{
-			var results  =new Dictionary<string, WebAuthenticationInformation>();
+            //todo this.AllWebConfigEntryList.AddRange(configEntries);
+        }
 
-			IEnumerable<IGrouping<string, WebConfigEntry>> configEntryGroups = authConfigEntries.GroupBy(a => a.Location);
+        private WebAuthenticationInformation GetSiteAuthenticationConfiguration(IEnumerable<WebConfigEntry> authConfigEntries, string siteName)
+        {
+            
+            IEnumerable<WebConfigEntry> siteConfigEntries = authConfigEntries.Where(groupedEntry => groupedEntry.Location == siteName);
+            
+            if(siteConfigEntries.Any())
+            return new WebAuthenticationInformation(siteConfigEntries);
+            else
+            {
+                return null;
+            }
 
-			foreach (var configEntriesByLocation in configEntryGroups)
-			{
-				results.Add(configEntriesByLocation.Key,new WebAuthenticationInformation(configEntriesByLocation));
-			}
+        }
 
-			return results;
-		}
+        private Dictionary<string, WebAppAuthenticationInformation> GetAppsAuthenticationConfigurations(IEnumerable<WebConfigEntry> authConfigEntries)
+        {
+            var results = new Dictionary<string, WebAppAuthenticationInformation>();
 
-		public override string GetChildCode(int baseIndentDepth)
-		{
-			string baseIndent = CodeGenHelpers.GetIndentString(baseIndentDepth);
+            IEnumerable<IGrouping<string, WebConfigEntry>> configEntryGroups = authConfigEntries.GroupBy(a => a.Location);
 
-			string code = "";
-			code += CodeGenHelpers.GenerateChildListCode("BindingInfo", this.Bindings.ToList<DesiredStateBase>(), baseIndentDepth, baseIndent);
+            foreach (var configEntriesByLocation in configEntryGroups)
+            {
+                results.Add(configEntriesByLocation.Key, new WebAppAuthenticationInformation(configEntriesByLocation));
+            }
 
-			if (AuthenticationInfo != null)
-				code += baseIndent + "AuthenticationInfo = \n" + this.AuthenticationInfo.GetCode(baseIndentDepth + 2, CodeGenType.SingleChild);
+            return results;
+        }
 
-			return code;
-		}
+        public override string GetChildCode(int baseIndentDepth)
+        {
+            string baseIndent = CodeGenHelpers.GetIndentString(baseIndentDepth);
 
-		protected override string DscObjectType
-		{
-			get { return "xWebSite"; }
-		}
+            string code = "";
+            code += CodeGenHelpers.GenerateChildListCode("BindingInfo", this.Bindings.ToList<DesiredStateBase>(), baseIndentDepth, baseIndent);
 
-		internal static string GetSiteKey(string siteName)
-		{
-			return CodeGenHelpers.FormatKey(siteName, "Site");
-		}
+            if (AuthenticationInfo != null)
+                code += baseIndent + "AuthenticationInfo = \n" + this.AuthenticationInfo.GetCode(baseIndentDepth + 2, CodeGenType.SingleChild);
 
-		public List<string> GetPoolsReferenced()
-		{
-			var pools = new List<string>();
+            return code;
+        }
 
-			pools.Add(this.ApplicationPool);
+        protected override string DscObjectType
+        {
+            get { return "xWebSite"; }
+        }
 
-			foreach (ApplicationDesiredState app in this.Applications)
-			{
-				pools.Add(app.ApplicationPool);
-			}
+        internal static string GetSiteKey(string siteName)
+        {
+            return CodeGenHelpers.FormatKey(siteName, "Site");
+        }
 
-			pools = pools.Distinct().OrderBy(p => p).ToList();
+        public List<string> GetPoolsReferenced()
+        {
+            var pools = new List<string>();
 
-			return pools;
-		}
+            pools.Add(this.ApplicationPool);
 
-		private List<IPBindingDesiredState> GetBindings(BindingCollection bindings)
-		{
-			var siteBindingList = new List<IPBindingDesiredState>();
+            foreach (ApplicationDesiredState app in this.Applications)
+            {
+                pools.Add(app.ApplicationPool);
+            }
 
-			foreach (var binding in bindings)
-			{
-				if (binding.Protocol.ToLower().StartsWith("http"))
-				{
-					var b = new IPBindingDesiredState(binding);
+            pools = pools.Distinct().OrderBy(p => p).ToList();
 
-					siteBindingList.Add(b);
-				}
-			}
+            return pools;
+        }
 
-			return siteBindingList;
-		}
+        private List<IPBindingDesiredState> GetBindings(BindingCollection bindings)
+        {
+            var siteBindingList = new List<IPBindingDesiredState>();
 
-		private List<ApplicationDesiredState> GetApplications(ApplicationCollection applications, string siteKey
-												, string siteName, Dictionary<string,WebAuthenticationInformation> authEntries)
-		{
-			var webApplicationList = new List<ApplicationDesiredState>();
+            foreach (var binding in bindings)
+            {
+                if (binding.Protocol.ToLower().StartsWith("http"))
+                {
+                    var b = new IPBindingDesiredState(binding);
 
-			foreach (var application in applications)
-			{
-				WebAuthenticationInformation authInfo;
-				authEntries.TryGetValue(siteName + application.Path, out authInfo);
+                    siteBindingList.Add(b);
+                }
+            }
 
-				var app = new ApplicationDesiredState(application, siteKey, siteName, authInfo);
-				
-				webApplicationList.Add(app);
-			}
+            return siteBindingList;
+        }
 
-			return webApplicationList;
-		}
+        private List<ApplicationDesiredState> GetApplications(ApplicationCollection applications, string siteKey
+                                                , string siteName, Dictionary<string, WebAppAuthenticationInformation> authEntries)
+        {
+            var webApplicationList = new List<ApplicationDesiredState>();
 
-	}
+            foreach (var application in applications)
+            {
+                WebAppAuthenticationInformation authInfo;
+                authEntries.TryGetValue(siteName + application.Path, out authInfo);
+
+                var app = new ApplicationDesiredState(application, siteKey, siteName, authInfo);
+
+                webApplicationList.Add(app);
+            }
+
+            return webApplicationList;
+        }
+
+    }
 
 }

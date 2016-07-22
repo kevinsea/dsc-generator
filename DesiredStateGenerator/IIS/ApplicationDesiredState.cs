@@ -10,14 +10,14 @@ namespace DesiredState.IIS
 		public bool IsRootApplication { get; private set; }
 		public string ApplicationPool { get; set; }
 		public List<VirtualDirectoryDesiredState> VirtualDirectories = new List<VirtualDirectoryDesiredState>();
-		public WebAuthenticationInformation AuthenticationInfo;
+		public WebAppAuthenticationInformation AuthenticationInfo;
 
-		public ApplicationDesiredState(Application application, string siteKey, string siteName, WebAuthenticationInformation authInfo)
+		public ApplicationDesiredState(Application application, string siteKey, string siteName, WebAppAuthenticationInformation authInfo)
 		{
 			Initialize(application, siteKey, siteName, authInfo);
 		}
 
-		private void Initialize(Application application, string siteKey, string siteName, WebAuthenticationInformation authInfo)
+		private void Initialize(Application application, string siteKey, string siteName, WebAppAuthenticationInformation authInfo)
 		{
 			this.Key = GetApplicationVariableName(siteName, application.Path);
 			this.IsRootApplication = (application.Path == "/");
