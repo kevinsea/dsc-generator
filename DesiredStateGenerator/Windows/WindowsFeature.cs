@@ -3,23 +3,23 @@
 namespace DesiredState.Windows
 {
 
-	internal class WindowsFeature : DesiredStateBase
-	{
+    internal class WindowsFeature : DesiredStateBase
+    {
 
-		public WindowsFeature(string variableName, string featureName, string ensureState
-						, string description = "")
-		{
-			this.Key = CodeGenHelpers.FormatKey(variableName, "Feature");
-			this.ObjectDescription = description;
+        public WindowsFeature(string variableName, string featureName, string ensureState
+                        , string description = "")
+        {
+            this.Key = CodeGenHelpers.FormatKey(variableName, "Feature");
+            this.ObjectDescription = description;
 
-			this.AddAttribute("Name", featureName);
-			this.AddAttribute("Ensure", ensureState);
-		}
+            this.AddAttribute("Name", featureName);
+            this.AddAttribute("Ensure", ensureState);
+        }
 
-		protected override string DscObjectType
-		{
-			get { return "WindowsFeature"; }
-		}
-	}
+        protected override string DscObjectType
+        {
+            get { return "WindowsFeature"; }
+        }
+    }
 
 }

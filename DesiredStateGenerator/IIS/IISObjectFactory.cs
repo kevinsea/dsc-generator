@@ -5,47 +5,47 @@ using Microsoft.Web.Administration;
 
 namespace DesiredState.IIS
 {
-	/// <summary>
-	/// Orchestrates assembly of all of the objects that make up IIS Site DSC
-	/// </summary>
-	internal class IISObjectFactory
-	{
+    /// <summary>
+    /// Orchestrates assembly of all of the objects that make up IIS Site DSC
+    /// </summary>
+    internal class IISObjectFactory
+    {
 
-		public List<SiteDesiredState> BuildSites(IISCodeGenerator.IisPoolAndSitesOptions iisOptions)
-		{
-			ServerManager serverManager = new ServerManager();
-			List<SiteDesiredState> siteCodeList = new List<SiteDesiredState>();
-	
-			List<WebConfigEntry> configEntryList = new WebConfigEntryAssembler().GetWebConfigEntries();
+        public List<SiteDesiredState> BuildSites(IISCodeGenerator.IisPoolAndSitesOptions iisOptions)
+        {
+            ServerManager serverManager = new ServerManager();
+            List<SiteDesiredState> siteCodeList = new List<SiteDesiredState>();
 
-			foreach (var site in serverManager.Sites)
-			{
-				var siteName = site.Name;
-				var siteConfigEntryList = configEntryList.Where(a => CodeGenHelpers.AreEqualCI(a.SiteName, siteName));
+            List<WebConfigEntry> configEntryList = new WebConfigEntryAssembler().GetWebConfigEntries();
 
-				var siteCode = new SiteDesiredState(site, siteConfigEntryList, iisOptions);
+            foreach (var site in serverManager.Sites)
+            {
+                var siteName = site.Name;
+                var siteConfigEntryList = configEntryList.Where(a => CodeGenHelpers.AreEqualCI(a.SiteName, siteName));
 
-				siteCodeList.Add(siteCode);
-			}
+                var siteCode = new SiteDesiredState(site, siteConfigEntryList, iisOptions);
 
-			return siteCodeList;
-		}
+                siteCodeList.Add(siteCode);
+            }
 
-		public List<PoolDesiredState> BuildPools(IISCodeGenerator.IisPoolAndSitesOptions iisOptions)
-		{
-			ServerManager serverManager = new ServerManager();
-			List<PoolDesiredState> poolCodeList = new List<PoolDesiredState>();
+            return siteCodeList;
+        }
 
-			var pools = serverManager.ApplicationPools;
+        public List<PoolDesiredState> BuildPools(IISCodeGenerator.IisPoolAndSitesOptions iisOptions)
+        {
+            ServerManager serverManager = new ServerManager();
+            List<PoolDesiredState> poolCodeList = new List<PoolDesiredState>();
 
-			foreach (var pool in pools)
-			{
-				var poolCode = new PoolDesiredState(pool, iisOptions);
-				poolCodeList.Add(poolCode);
-			}
+            var pools = serverManager.ApplicationPools;
 
-			return poolCodeList;
-		}
+            foreach (var pool in pools)
+            {
+                var poolCode = new PoolDesiredState(pool, iisOptions);
+                poolCodeList.Add(poolCode);
+            }
 
-	}
+            return poolCodeList;
+        }
+
+    }
 }
