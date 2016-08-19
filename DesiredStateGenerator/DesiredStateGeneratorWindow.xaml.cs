@@ -51,7 +51,7 @@ namespace DesiredState
 
 			catch (Exception ex)
 			{
-				ShowErrorMessage(ex.Message + " (" + ex.GetType().Name + ")");
+				ShowExceptionDialog(ex);
 			}
 			finally
 			{
@@ -93,6 +93,14 @@ namespace DesiredState
 			Trace.TraceError(errorMsg);
 
 			MessageBox.Show(errorMsg, "An Error Occurred.");
+		}
+
+		private void ShowExceptionDialog(Exception ex)
+		{
+			Trace.TraceError(ex.Message);
+
+			var window = new ErrorWindow(ex);
+			window.ShowDialog();
 		}
 
 	}
