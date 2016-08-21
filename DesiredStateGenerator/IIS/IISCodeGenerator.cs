@@ -30,6 +30,7 @@ namespace DesiredState.IIS
 
             if (options.StandardizeAppPoolRecycles)
                 sb.AppendLine(baseIndent + @"$appPoolRecycleHour = '02'");
+
             sb.AppendLine(baseIndent);
 
             if (options.IisPoolAndSitesGenerationMode == IisPoolAndSitesGenerationMode.ConfigFileOrder)
@@ -128,7 +129,7 @@ namespace DesiredState.IIS
                     if (poolToGenerate != null)
                     {
                         code = GeneratePool(poolToGenerate);
-                        sb.Append(code);
+                        sb.AppendLine(code);
 
                         poolsLeftToGenerate.Remove(poolToGenerate);
                     }

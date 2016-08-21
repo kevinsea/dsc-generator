@@ -22,7 +22,9 @@ namespace DesiredState.IIS
             this.Key = GetApplicationVariableName(siteName, application.Path);
             this.IsRootApplication = (application.Path == "/");
 
-            AddAttribute("Name", application.Path);
+            string name = application.Path.StartsWith("/") ? application.Path.Substring(1) : application.Path;
+            AddAttribute("Name", name);
+
             AddAttribute("Ensure", "Present");
             AddAttribute("Website", siteName);
             AddAttribute("PhysicalPath", application.VirtualDirectories[0].PhysicalPath);

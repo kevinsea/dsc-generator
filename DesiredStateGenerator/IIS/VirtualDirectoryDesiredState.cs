@@ -18,7 +18,8 @@ namespace DesiredState.IIS
 
             this.IsRootOfAnApplication = (virtualDirectory.Path == "/");
 
-            AddAttribute("Name", virtualDirectory.Path);
+            string name = virtualDirectory.Path.StartsWith("/") ? virtualDirectory.Path.Substring(1) : virtualDirectory.Path;
+            AddAttribute("Name", name);
 
             AddAttribute("Ensure", "Present");
             AddAttribute("Website", siteName);

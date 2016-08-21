@@ -32,9 +32,6 @@ namespace DesiredState.IIS
             {
                 string recycleTime = "$appPoolRecycleHour+':00:00'";//.Replace("'", "\"");
                 this.AddAttributeWithOverrideValue("RestartSchedule", $"@({recycleTime})", GetScheduleString(iisPoolObject));
-
-                //			this.AddAttributeWithOverrideValue("RestartSchedule", "@('02:00:00')", GetScheduleString(iisPoolObject));
-
             }
             else
             {
