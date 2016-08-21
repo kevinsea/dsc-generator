@@ -30,7 +30,7 @@ namespace DesiredState.IIS
 
             if (iisOptions.StandardizeAppPoolRecycles)
             {
-                string recycleTime = "$appPoolRecycleHour+':00:00'";//.Replace("'", "\"");
+                string recycleTime = "$appPoolRecycleHour+':#PoolRecycleMins#'";  //tag mins so it can be injected at code gen 
                 this.AddAttributeWithOverrideValue("RestartSchedule", $"@({recycleTime})", GetScheduleString(iisPoolObject));
             }
             else

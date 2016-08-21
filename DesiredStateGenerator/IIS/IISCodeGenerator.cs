@@ -68,21 +68,27 @@ namespace DesiredState.IIS
 
         private string GeneratePools(IEnumerable<PoolDesiredState> poolList)
         {
+            int poolCounter = 0;
             StringBuilder sb = new StringBuilder();
             string code = "";
 
             foreach (var poolCode in poolList)
             {
-                code = GeneratePool(poolCode);
+                code = GeneratePool(poolCode, poolCounter);
                 sb.AppendLine(code);
+                poolCounter++;
             }
 
             return sb.ToString();
         }
 
-        private static string GeneratePool(PoolDesiredState poolCode)
+        private static string GeneratePool(PoolDesiredState poolCode, int poolCounter)
         {
-            return poolCode.GetCode(2);
+            string code = poolCode.GetCode(2);
+
+            string poolMinStr = (poolCounter % 60).ToString("00");
+            code = code.Replace("#PoolRecycleMins#", poolMinStr + ":00");
+            return code;
         }
 
         private string GenerateSites(List<SiteDesiredState> siteList)
@@ -111,6 +117,7 @@ namespace DesiredState.IIS
                                             , IEnumerable<PoolDesiredState> poolList)
         {
             string code = "";
+            int poolCounter = 0;
             StringBuilder sb = new StringBuilder();
 
             List<PoolDesiredState> poolsLeftToGenerate = new List<PoolDesiredState>(poolList);
@@ -128,7 +135,8 @@ namespace DesiredState.IIS
 
                     if (poolToGenerate != null)
                     {
-                        code = GeneratePool(poolToGenerate);
+                        code = GeneratePool(poolToGenerate, poolCounter);
+                        poolCounter++;
                         sb.AppendLine(code);
 
                         poolsLeftToGenerate.Remove(poolToGenerate);
