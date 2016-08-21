@@ -31,30 +31,30 @@ namespace DesiredState.IIS
         /// <summary>
         /// Recursive method that goes that traverses the tree until it finds configuration attributes
         /// </summary>
-        public void Traverse(XElement element, string nodePath, string sitelocation, List<WebConfigEntry> resultList)
+        public void Traverse(XElement element, string nodePath, string path, List<WebConfigEntry> resultList)
         {
             if (element.HasElements)
             {
                 foreach (var childElement in element.Elements())
                 {
                     string newNodePath = nodePath + "/" + childElement.Name.LocalName;
-                    Traverse(childElement, newNodePath, sitelocation, resultList);
+                    Traverse(childElement, newNodePath, path, resultList);
                 }
             }
             else
             {
-                var attribute = BuildEntry(element, nodePath, sitelocation);
+                var attribute = BuildEntry(element, nodePath, path);
                 resultList.AddRange(attribute);
             }
         }
 
-        public List<WebConfigEntry> BuildEntry(XElement element, string nodePath, string sitelocation)
+        public List<WebConfigEntry> BuildEntry(XElement element, string nodePath, string path)
         {
             var configEntries = new List<WebConfigEntry>();
 
             foreach (var property in element.Attributes())
             {
-                var configEntry = new WebConfigEntry(element.Name.LocalName, nodePath, element.Attributes(), sitelocation);
+                var configEntry = new WebConfigEntry(element.Name.LocalName, nodePath, element.Attributes(), path);
 
                 configEntries.Add(configEntry);
             }

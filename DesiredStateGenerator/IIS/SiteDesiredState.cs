@@ -17,7 +17,7 @@ namespace DesiredState.IIS
         private string ApplicationPool { get; set; }
 
         public SiteDesiredState(Site iisSiteObject
-                                , IEnumerable<WebConfigEntry> configEntries
+                                , List<WebConfigEntry> configEntries
                                 , IISCodeGenerator.IisPoolAndSitesOptions iisOptions)
         {
             var rootApp = iisSiteObject.Applications[0];
@@ -45,17 +45,17 @@ namespace DesiredState.IIS
 
             this.AuthenticationInfo = GetSiteAuthenticationConfiguration(configEntries, iisSiteObject.Name);
 
-            Dictionary<string, WebAppAuthenticationInformation> authEntries = GetAppsAuthenticationConfigurations(configEntries);
+            Dictionary<string, WebAuthenticationInformation> authEntries = GetAppsAuthenticationConfigurations(configEntries);
 
             this.Applications = GetApplications(iisSiteObject.Applications, this.Key, this.Name, authEntries);
 
             //todo this.AllWebConfigEntryList.AddRange(configEntries);
         }
 
-        private WebAuthenticationInformation GetSiteAuthenticationConfiguration(IEnumerable<WebConfigEntry> authConfigEntries, string siteName)
+        private WebAuthenticationInformation GetSiteAuthenticationConfiguration(List<WebConfigEntry> authConfigEntries, string siteName)
         {
 
-            IEnumerable<WebConfigEntry> siteConfigEntries = authConfigEntries.Where(groupedEntry => groupedEntry.Location == siteName);
+            List<WebConfigEntry> siteConfigEntries = authConfigEntries.Where(groupedEntry => groupedEntry.Path == siteName).ToList();
 
             if (siteConfigEntries.Any())
                 return new WebAuthenticationInformation(siteConfigEntries);
@@ -66,15 +66,15 @@ namespace DesiredState.IIS
 
         }
 
-        private Dictionary<string, WebAppAuthenticationInformation> GetAppsAuthenticationConfigurations(IEnumerable<WebConfigEntry> authConfigEntries)
+        private Dictionary<string, WebAuthenticationInformation> GetAppsAuthenticationConfigurations(List<WebConfigEntry> authConfigEntries)
         {
-            var results = new Dictionary<string, WebAppAuthenticationInformation>();
+            var results = new Dictionary<string, WebAuthenticationInformation>();
 
-            IEnumerable<IGrouping<string, WebConfigEntry>> configEntryGroups = authConfigEntries.GroupBy(a => a.Location);
+            IEnumerable<IGrouping<string, WebConfigEntry>> configEntryGroups = authConfigEntries.GroupBy(a => a.Path);
 
             foreach (var configEntriesByLocation in configEntryGroups)
             {
-                results.Add(configEntriesByLocation.Key, new WebAppAuthenticationInformation(configEntriesByLocation));
+                results.Add(configEntriesByLocation.Key, new WebAuthenticationInformation(configEntriesByLocation.ToList()));
             }
 
             return results;
@@ -137,13 +137,13 @@ namespace DesiredState.IIS
         }
 
         private List<ApplicationDesiredState> GetApplications(ApplicationCollection applications, string siteKey
-                                                , string siteName, Dictionary<string, WebAppAuthenticationInformation> authEntries)
+                                                , string siteName, Dictionary<string, WebAuthenticationInformation> authEntries)
         {
             var webApplicationList = new List<ApplicationDesiredState>();
 
             foreach (var application in applications)
             {
-                WebAppAuthenticationInformation authInfo;
+                WebAuthenticationInformation authInfo;
                 authEntries.TryGetValue(siteName + application.Path, out authInfo);
 
                 var app = new ApplicationDesiredState(application, siteKey, siteName, authInfo);

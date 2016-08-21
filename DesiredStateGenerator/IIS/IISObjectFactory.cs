@@ -21,7 +21,7 @@ namespace DesiredState.IIS
             foreach (var site in serverManager.Sites)
             {
                 var siteName = site.Name;
-                var siteConfigEntryList = configEntryList.Where(a => CodeGenHelpers.AreEqualCI(a.SiteName, siteName));
+                List<WebConfigEntry> siteConfigEntryList = configEntryList.Where(a => CodeGenHelpers.AreEqualCI(a.SiteName, siteName)).ToList();
 
                 var siteCode = new SiteDesiredState(site, siteConfigEntryList, iisOptions);
 

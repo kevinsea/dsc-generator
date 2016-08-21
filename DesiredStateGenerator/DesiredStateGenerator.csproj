@@ -104,7 +104,6 @@
     <Compile Include="ErrorWindow.xaml.cs">
       <DependentUpon>ErrorWindow.xaml</DependentUpon>
     </Compile>
-    <Compile Include="IIS\WebAppAuthenticationInformation.cs" />
     <Compile Include="IIS\WebAuthenticationInformation.cs" />
     <Compile Include="IIS\WebConfigEntryAssembler.cs" />
     <Compile Include="IIS\IISCodeGenerator.cs" />
