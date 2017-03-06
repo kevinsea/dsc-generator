@@ -16,7 +16,10 @@ namespace DesiredState.IIS
             AddAttribute("Protocol", binding.Protocol);
             AddAttribute("Port", binding.EndPoint.Port.ToString());
 
-            string address = binding.EndPoint.Address.ToString();
+			if(binding.Host !="")
+				AddAttribute("HostName", binding.Host);
+
+			string address = binding.EndPoint.Address.ToString();
 
             if (address == "0.0.0.0")
                 address = "*";
